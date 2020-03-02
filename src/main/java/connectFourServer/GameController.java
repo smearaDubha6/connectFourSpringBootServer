@@ -26,12 +26,7 @@ public class GameController {
     @Autowired
     private Environment env;
 
-	// TODO : Would it be better to store the players in a data structure, 
-	// for example an array and can reference players via the array index,
-	// it might simplify the code below where we have various checks on which
-	// player we are dealing with
-	Player player1;
-	Player player2;
+    Player[] players = new Player[2];
     
     @GetMapping("/isAcceptingClients")
     @ResponseBody
@@ -44,31 +39,32 @@ public class GameController {
     public Player addPlayer(@PathVariable("playerName") String playerName) {
     	if (board.isAcceptingPlayers()) {
     		if (board.getNumPlayers() == 0) {
-    			player1 = new Player(playerName);
+    			players[0] = new Player(playerName);
     			board.increaseNumPlayers();
-    			return player1;
+    			return players[0];
     		} else {
-    			player2 = new Player(playerName);
+    			players[1] = new Player(playerName);
     			board.increaseNumPlayers();
     			
     			// if colour has already been chosen then give the player
     			// the other colour
     			if (board.isColourChosen()) {
     				if (board.getColourChosenInt() == Board.RED) {
-    					player2.setColour(Board.YELLOW);
+    					players[1].setColour(Board.YELLOW);
     				} else {
-    					player2.setColour(Board.RED);
+    					players[1].setColour(Board.RED);
     				}
     			}
     			
-    			return player2;
+    			return players[1];
     		}
     	} else {
     		// we have enough players already
+    		// TODO : add error
     		return null;
     	}
     }
-    
+   
     @GetMapping("/colourChosen")
     @ResponseBody
     public ServerAnswer colourChosen() {
@@ -79,51 +75,46 @@ public class GameController {
     @ResponseBody
     public Player chooseColour(@PathVariable("playerId") int playerId, 
     		@PathVariable("colour") int colour) {
+    	
+    	int playerIndex;
+		int otherPlayerIndex;
+		
+		if (players[0].getId() == playerId) {
+			playerIndex = 0;
+			otherPlayerIndex = 1;
+		} else if (players[1].getId() == playerId) {
+			playerIndex = 1;
+			otherPlayerIndex = 0;
+		} else {
+			// we have have received an ID we know nothing about
+			// TODO : return error
+			return null;
+		}
+    	
     	if (!board.isColourChosen()) {
 
     		// TODO : Add validation of colour
     		
-    		// TODO : There appears to be a lot of code replication below.
-    		// Have a look to see if this can be improved
+    		// TODO : add validation of player!!
     		
-    		if (player1.getId() == playerId) {
-    			player1.setColour(colour);
-    			board.setColourChosen(true);
-    			board.setColourChosenInt(colour);
+    		players[playerIndex].setColour(colour);
+    		board.setColourChosen(true);
+    		board.setColourChosenInt(colour);
     			
-    			// if a second player has already been created then set his 
-    			// colour to the other one available
-    			if (board.getNumPlayers() == 2) {
-    				if (colour == Board.RED) {
-    					player2.setColour(Board.YELLOW);	
-    				} else {
-    					player2.setColour(Board.RED);
-    				}
+    		// if a second player has already been created then set his 
+    		// colour to the other one available
+    		if (board.getNumPlayers() == 2) {
+    			if (colour == Board.RED) {
+    				players[otherPlayerIndex].setColour(Board.YELLOW);	
+    			} else {
+    				players[otherPlayerIndex].setColour(Board.RED);
     			}
-    			
-    			return player1;
-    		} else if (player2.getId() == playerId){
-    			player2.setColour(colour);
-    			board.setColourChosen(true);
-    			board.setColourChosenInt(colour);
-    			
-    			// if a second player has already been created then set his 
-    			// colour to the other one available
-    			if (board.getNumPlayers() == 2) {
-    				if (colour == Board.RED) {
-    					player1.setColour(Board.YELLOW);	
-    				} else {
-    					player1.setColour(Board.RED);
-    				}
-    			}
-    			
-    			return player2;
-    		} else {
-    			// we have have received an ID we know nothing about
-    			return null;
     		}
-    	} else {
-    		
+    			
+    		return players[playerIndex];	   	
+    	} else {  		
+    		// assign the other colour to the user because a colour
+    		// has already been chosen
     		int colourDefaut = -1;
     		if (board.getColourChosenInt() == Board.RED) {
     			colourDefaut = Board.YELLOW;
@@ -131,16 +122,9 @@ public class GameController {
     			colourDefaut = Board.RED;
     		}
     		
-    		// assign the other colour
-    		if (player1.getId() == playerId) {
-    			player1.setColour(colourDefaut);
-    			return player1;
-    		} else if (player2.getId() == playerId){
-    			player2.setColour(colourDefaut);	
-    			return player2;
-    		} else {
-    			return null;
-    		}
+    		
+    		players[playerIndex].setColour(colourDefaut);
+			return players[playerIndex];
     	}
     }
     
@@ -179,15 +163,16 @@ public class GameController {
     	int colour;
     	String name;
     	
-    	if (player1.getId() == playerId) {
-			colour = player1.getColour();
-			name = player1.getName();
-		} else if (player2.getId() == playerId) {
-			colour = player2.getColour();
-			name = player2.getName();
+    	if (players[0].getId() == playerId) {
+			colour = players[0].getColour();
+			name = players[0].getName();
+		} else if (players[1].getId() == playerId) {
+			colour = players[1].getColour();
+			name = players[1].getName();
 		} else {
 			// we have have received an ID we know nothing about
-			return null;
+			// TODO : consider returning an error - will require client changes
+			return gameState();
 		}
     	
     	Slot slot = board.recordMove(column, colour);
