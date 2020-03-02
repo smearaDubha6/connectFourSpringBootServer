@@ -13,7 +13,7 @@ import java.util.Map;
  * @author Richie Duggan
  */
 public class Board {
-	
+
     public static final int NUM_ROWS = 6;
     public static final int NUM_COLS = 9;
     public static final int WINNING_SCORE = 5;
@@ -55,11 +55,8 @@ public class Board {
     
     private long lastRecordedMove;
     
-    // TODO : instead of hardcoding this, instead read it from 
-    // application.properties via ConfigProperties class
-    public static final int ALLOWED_GO_MINUTES = 10;
-    
-    public Board() {}
+    public Board() {
+    }
     
     /* The following are various getters and setters required
      * for operating the board

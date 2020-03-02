@@ -1,17 +1,10 @@
 package connectFourServer;
 
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-
 import java.util.Date;
-import java.util.concurrent.atomic.AtomicLong;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.MediaType;
+import org.springframework.core.env.Environment;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -30,6 +23,9 @@ public class GameController {
 	
 	Board board = new Board();
 	
+    @Autowired
+    private Environment env;
+
 	// TODO : Would it be better to store the players in a data structure, 
 	// for example an array and can reference players via the array index,
 	// it might simplify the code below where we have various checks on which
@@ -165,14 +161,16 @@ public class GameController {
     public BoardState takeTurn(@PathVariable("playerId") int playerId, 
     		@PathVariable("column") int column) {
     	
-    	if (board.getGameOver()) {
+    	if (board.getGameOver() || (board.getNumPlayers() < 2)) {
     		return gameState();
-    	}
+    	}    	
     	
     	// check to see if too much time has passed since the last go
     	if (board.getLastRecordedMove() != 0) { 	
     		long currentTime = new Date().getTime();
-    		if ((currentTime - board.getLastRecordedMove())/1000 > (Board.ALLOWED_GO_MINUTES * 60)) {
+		int allowed_go_mins = Integer.parseInt(env.getProperty("game.allowedGoMinutes"));
+
+    		if ((currentTime - board.getLastRecordedMove())/1000 > (allowed_go_mins * 60)) {
     			board.setGameOver(true);
     			return gameState();
     		}
