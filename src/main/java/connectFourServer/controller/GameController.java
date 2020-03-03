@@ -15,11 +15,6 @@ import org.springframework.core.env.Environment;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-// TODO : I would like to simplify this class by just having it call appropriate
-// methods in a different class instead of having the business logic built into it.
-// I would also like to add more stringent checking around what is accepted as input
-// and explicitly define the type of data that is being sent back.
-
 /**
  * This class represents the controller. It defines the REST API
  *
