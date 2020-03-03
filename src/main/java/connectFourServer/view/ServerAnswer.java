@@ -1,4 +1,4 @@
-package connectFourServer;
+package connectFourServer.view;
 
 /**
  * This class is a simple class returning a boolean answer to a question
@@ -7,7 +7,7 @@ package connectFourServer;
  * @author Richie Duggan
  */
 public class ServerAnswer {
-
+	
   private boolean answer;
 
   public ServerAnswer(boolean answer) {

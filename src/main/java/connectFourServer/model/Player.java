@@ -1,4 +1,4 @@
-package connectFourServer;
+package connectFourServer.model;
 
 /**
  * This class represents a player in the game.

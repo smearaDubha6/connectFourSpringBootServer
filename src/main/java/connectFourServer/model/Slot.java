@@ -1,4 +1,4 @@
-package connectFourServer;
+package connectFourServer.model;
 
 /**
  * This class represents a slot on the game board, recorded as a set of 

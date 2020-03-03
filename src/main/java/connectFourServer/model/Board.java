@@ -1,8 +1,12 @@
-package connectFourServer;
+package connectFourServer.model;
 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.springframework.stereotype.Service;
+
+import connectFourServer.model.Slot;
 
 /**
  * This class represents the board of the Connect 4 game. It handles recording
@@ -12,6 +16,7 @@ import java.util.Map;
  *
  * @author Richie Duggan
  */
+@Service
 public class Board {
 
     public static final int NUM_ROWS = 6;

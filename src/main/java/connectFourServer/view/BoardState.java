@@ -1,4 +1,4 @@
-package connectFourServer;
+package connectFourServer.view;
 
 /**
  * This class represents the state of the board at a state in time. It is used
