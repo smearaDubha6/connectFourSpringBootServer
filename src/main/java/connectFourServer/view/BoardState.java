@@ -1,7 +1,7 @@
 package connectFourServer.view;
 
 /**
- * This class represents the state of the board at a state in time. It is used
+ * This class represents the state of the board at a point in time. It is used
  * to send a response back to the client for most requests so the client has
  * all the information needed in order to display content how it so wishes
  *
